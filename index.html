@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="theme-color" content="#07131f" />
   <title>板督中公校内运动会实时奖牌榜</title>
   <link rel="stylesheet" href="styles.css" />
@@ -33,6 +33,16 @@
     </section>
 
     <section class="scoreboard" id="scoreboard" aria-label="各组奖牌榜"></section>
+
+    <section class="poster-section" aria-labelledby="posterTitle">
+      <div class="poster-heading"><p>POSTER GALLERY</p><h2 id="posterTitle">海报预览</h2></div>
+      <div class="poster-carousel" id="posterCarousel" tabindex="0" aria-label="海报3D轮播">
+        <button class="poster-arrow previous" type="button" aria-label="上一张海报">‹</button>
+        <div class="poster-stage" id="posterStage"></div>
+        <button class="poster-arrow next" type="button" aria-label="下一张海报">›</button>
+      </div>
+      <div class="poster-dots" id="posterDots" aria-label="选择海报"></div>
+    </section>
 
     <nav class="quick-actions" aria-label="运动会资料">
       <button type="button" data-panel="program"><span class="action-icon" aria-hidden="true">▦</span><span class="action-label">节目表<small>Atur Cara</small></span></button>
