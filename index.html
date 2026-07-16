@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#07131f" />
+  <title>板督中公校内运动会实时奖牌榜</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="responsive.css" />
+</head>
+<body>
+  <header class="hero">
+    <div>
+      <p class="kicker">STS CHP 2026 · LIVE</p>
+      <h1>板督中公校内运动会实时奖牌榜</h1>
+      <p class="subtitle">勇往直前 · 我能</p>
+    </div>
+    <div class="live-pill"><span></span> <b id="syncStatus">正在连接成绩表</b></div>
+  </header>
+
+  <main>
+    <section class="summary-bar" aria-label="赛事概况">
+      <div><span>已颁发奖牌</span><strong id="totalMedals">0</strong></div>
+      <div><span>领先队伍</span><strong id="leaderName">—</strong></div>
+      <div><span>最后更新</span><strong id="updatedTime">尚未更新</strong></div>
+    </section>
+
+    <section class="ranking-panel">
+      <div class="section-title">
+        <div><p>STANDINGS</p><h2>当前排名</h2></div>
+      </div>
+      <div id="rankingList" class="ranking-list"></div>
+    </section>
+
+    <section class="scoreboard" id="scoreboard" aria-label="各组奖牌榜"></section>
+
+    <nav class="quick-actions" aria-label="运动会资料">
+      <button type="button" data-panel="program"><span class="action-icon" aria-hidden="true">▦</span><span class="action-label">节目表<small>Atur Cara</small></span></button>
+      <button type="button" data-panel="events"><span class="action-icon" aria-hidden="true">⚑</span><span class="action-label">赛事表<small>Acara</small></span></button>
+      <button type="button" data-panel="sponsors"><span class="action-icon" aria-hidden="true">◆</span><span class="action-label">赞助商<small>Penaja</small></span></button>
+      <button type="button" data-panel="staff"><span class="action-icon" aria-hidden="true">♟</span><span class="action-label">工作人员<small>Jawatankuasa</small></span></button>
+    </nav>
+  </main>
+
+  <template id="teamTemplate">
+    <article class="team-card">
+      <div class="rank-mark"></div>
+      <div class="team-heading"><div class="flag"></div><div><small>TEAM</small><h2></h2></div></div>
+      <div class="medals"></div>
+    </article>
+  </template>
+
+  <section class="info-modal" id="infoModal" hidden>
+    <div class="info-dialog" role="dialog" aria-modal="true" aria-labelledby="infoTitle">
+      <header><div><p id="infoEyebrow"></p><h2 id="infoTitle"></h2></div><button id="closeInfo" type="button" aria-label="关闭">×</button></header>
+      <div class="info-content" id="infoContent"></div>
+    </div>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>
