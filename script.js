@@ -2,6 +2,25 @@ const SHEET_ID = "1QNphF5TzPIeUlIgwGofiYiJ1tdN4AMcL";
 const SHEET_JSON_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=Sheet1`;
 const REFRESH_INTERVAL = 10000;
 
+document.addEventListener("gesturestart", event => event.preventDefault(), { passive: false });
+document.addEventListener("gesturechange", event => event.preventDefault(), { passive: false });
+document.addEventListener("gestureend", event => event.preventDefault(), { passive: false });
+
+const posterItems = [
+  { image: "BANNER/1.jpg", title: "海报 1" },
+  { image: "BANNER/2.jpg", title: "海报 2" },
+  { image: "BANNER/3.jpg", title: "海报 3" },
+  { image: "BANNER/3-1.jpg", title: "海报 3-1" },
+  { image: "BANNER/4.jpg", title: "海报 4" },
+  { image: "BANNER/5.jpg", title: "海报 5" },
+  { image: "BANNER/6.jpg", title: "海报 6" },
+  { image: "BANNER/7.jpg", title: "海报 7" },
+  { image: "BANNER/8.jpg", title: "海报 8" },
+  { image: "BANNER/9.jpg", title: "海报 9" }
+];
+let activePoster = 0;
+let posterTimer;
+
 const teams = [
   { id: "red", name: "红组", malayName: "Rumah Sukan Merah", subtitle: "Rumah Sukan Merah", color: "#ff4f5e", aliases: ["红组", "红", "red"] },
   { id: "yellow", name: "黄组", malayName: "Rumah Sukan Kuning", color: "#ffd23f", aliases: ["黄组", "黄", "yellow"] },
@@ -238,6 +257,7 @@ const staffItems = [
   ["JURUGAMBAR", ["PAU KEAK YIONG"]],
   ["GURU RUMAH SUKAN", ["JAIMY GOH BOON SUANG (BIRU)", "PUAN SITI KHADIJAH BINTI MAT DAUD (KUNING)", "PUAN TAN GUAT LEE (MERAH)"]]
 ];
+const sponsorItems = ["COCOCROWN JAYA"];
 const eventTranslations = {
   "Lompat Tinggi": "跳高",
   "Lompat Jauh": "跳远",
@@ -276,7 +296,7 @@ function openInfoPanel(type) {
         ? `<p>赛事资料正在从 Google Sheet 读取，请稍后再试。</p>`
         : type === "staff"
           ? `<div class="staff-list">${staffItems.map(([role, names]) => `<article><strong>${role}</strong><div>${names.map(name => `<span>${name}</span>`).join("")}</div></article>`).join("")}</div>`
-          : `<div class="panel-placeholder"><span>◆</span><p>${panelInfo[1]}资料即将公布</p></div>`;
+          : `<div class="sponsor-list">${sponsorItems.map(name => `<article><span>◆</span><strong>${name}</strong></article>`).join("")}</div>`;
   infoModal.dataset.panel = type;
   infoModal.hidden = false;
   document.body.style.overflow = "hidden";
@@ -320,6 +340,56 @@ function closeInfoPanel() {
 document.querySelector("#closeInfo").addEventListener("click", closeInfoPanel);
 infoModal.addEventListener("click", event => { if (event.target === infoModal) closeInfoPanel(); });
 document.addEventListener("keydown", event => { if (event.key === "Escape") closeInfoPanel(); });
+
+function renderPosterCarousel() {
+  const stage = document.querySelector("#posterStage");
+  const dots = document.querySelector("#posterDots");
+  stage.innerHTML = posterItems.map((poster, index) => `<article class="poster-card" data-poster-index="${index}">${poster.image ? `<img src="${poster.image}" alt="${poster.title}" />` : `<div class="poster-placeholder"><span>▧</span><strong>${poster.title}</strong><small>1 : 2.11</small></div>`}</article>`).join("");
+  dots.innerHTML = posterItems.map((_, index) => `<button type="button" data-poster-dot="${index}" aria-label="查看第 ${index + 1} 张海报"></button>`).join("");
+  updatePosterPositions();
+}
+
+function updatePosterPositions() {
+  document.querySelectorAll(".poster-card").forEach((card, index) => {
+    const total = posterItems.length;
+    const left = (activePoster - 1 + total) % total;
+    const right = (activePoster + 1) % total;
+    card.className = `poster-card ${index === activePoster ? "is-active" : index === left ? "is-left" : index === right ? "is-right" : "is-hidden"}`;
+  });
+  document.querySelectorAll("[data-poster-dot]").forEach((dot, index) => dot.classList.toggle("active", index === activePoster));
+}
+
+function movePoster(direction) {
+  activePoster = (activePoster + direction + posterItems.length) % posterItems.length;
+  updatePosterPositions();
+  restartPosterTimer();
+}
+
+function restartPosterTimer() {
+  clearInterval(posterTimer);
+  posterTimer = setInterval(() => movePoster(1), 4500);
+}
+
+const posterCarousel = document.querySelector("#posterCarousel");
+posterCarousel.querySelector(".previous").addEventListener("click", () => movePoster(-1));
+posterCarousel.querySelector(".next").addEventListener("click", () => movePoster(1));
+document.querySelector("#posterDots").addEventListener("click", event => {
+  const dot = event.target.closest("[data-poster-dot]");
+  if (dot) { activePoster = Number(dot.dataset.posterDot); updatePosterPositions(); restartPosterTimer(); }
+});
+posterCarousel.addEventListener("keydown", event => {
+  if (event.key === "ArrowLeft") movePoster(-1);
+  if (event.key === "ArrowRight") movePoster(1);
+});
+let swipeStartX = 0;
+posterCarousel.addEventListener("touchstart", event => { swipeStartX = event.touches[0].clientX; }, { passive: true });
+posterCarousel.addEventListener("touchend", event => {
+  const distance = event.changedTouches[0].clientX - swipeStartX;
+  if (Math.abs(distance) > 45) movePoster(distance > 0 ? -1 : 1);
+}, { passive: true });
+
+renderPosterCarousel();
+restartPosterTimer();
 
 function loadSheetWithJsonp() {
   return new Promise((resolve, reject) => {
