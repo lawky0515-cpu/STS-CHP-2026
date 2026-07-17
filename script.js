@@ -277,13 +277,27 @@ function getBilingualEventName(name) {
   return chinese ? `${chinese} / ${name}` : name;
 }
 const infoModal = document.querySelector("#infoModal");
+let infoCloseTimer;
+
+function showInfoModal() {
+  clearTimeout(infoCloseTimer);
+  const wasHidden = infoModal.hidden;
+  infoModal.hidden = false;
+  infoModal.classList.remove("is-closing");
+  if (wasHidden) {
+    requestAnimationFrame(() => requestAnimationFrame(() => infoModal.classList.add("is-open")));
+  } else {
+    infoModal.classList.add("is-open");
+  }
+  document.body.style.overflow = "hidden";
+}
 
 function openInfoPanel(type) {
   const isProgramme = type === "program";
   const panelInfo = {
     program: ["PROGRAMME", "节目表"],
     events: ["EVENTS", "赛事表"],
-    sponsors: ["SPONSORS", "赞助商"],
+    sponsors: ["WITH GRATITUDE", "感恩有您 · 老板发大财"],
     staff: ["COMMITTEE", "工作人员"]
   }[type];
   document.querySelector("#infoEyebrow").textContent = panelInfo[0];
@@ -302,8 +316,7 @@ function openInfoPanel(type) {
           ? `<div class="staff-list">${staffItems.map(([role, names]) => `<article><strong>${role}</strong><div>${names.map(name => `<span>${name}</span>`).join("")}</div></article>`).join("")}</div>`
           : `<div class="sponsor-list">${Array.from({ length: 12 }, (_, index) => sponsorItems[index] || "").map(name => `<article class="${name ? "" : "empty"}">${name ? `<strong>${name}</strong>` : `<span>◆</span><small>COMING SOON</small>`}</article>`).join("")}</div>`;
   infoModal.dataset.panel = type;
-  infoModal.hidden = false;
-  document.body.style.overflow = "hidden";
+  showInfoModal();
 }
 
 function openTeamAwards(teamId) {
@@ -316,8 +329,7 @@ function openTeamAwards(teamId) {
     ? `<div class="team-award-list">${awards.map(award => `<article class="award-${award.medal}"><span>${medalLabels[award.medal]}</span><div><strong>${getBilingualEventName(award.eventName)}</strong><small>${award.gender}${award.amount > 1 ? ` · ${award.amount} 面` : ""}</small></div></article>`).join("")}</div>`
     : `<div class="panel-placeholder"><span>☆</span><p>目前没有得奖项目</p></div>`;
   infoModal.dataset.panel = `team-${teamId}`;
-  infoModal.hidden = false;
-  document.body.style.overflow = "hidden";
+  showInfoModal();
 }
 
 document.querySelector(".quick-actions").addEventListener("click", event => {
@@ -337,8 +349,14 @@ document.querySelector("#scoreboard").addEventListener("keydown", event => {
 });
 
 function closeInfoPanel() {
-  infoModal.hidden = true;
+  if (infoModal.hidden || infoModal.classList.contains("is-closing")) return;
+  infoModal.classList.remove("is-open");
+  infoModal.classList.add("is-closing");
   document.body.style.overflow = "";
+  infoCloseTimer = setTimeout(() => {
+    infoModal.hidden = true;
+    infoModal.classList.remove("is-closing");
+  }, 360);
 }
 
 document.querySelector("#closeInfo").addEventListener("click", closeInfoPanel);
@@ -376,6 +394,7 @@ function restartPosterTimer() {
 
 const posterCarousel = document.querySelector("#posterCarousel");
 const posterLightbox = document.querySelector("#posterLightbox");
+let posterLightboxCloseTimer;
 posterCarousel.querySelector(".previous").addEventListener("click", () => movePoster(-1));
 posterCarousel.querySelector(".next").addEventListener("click", () => movePoster(1));
 document.querySelector("#posterDots").addEventListener("click", event => {
@@ -389,15 +408,30 @@ document.querySelector("#posterStage").addEventListener("click", event => {
   if (!poster?.image) return;
   document.querySelector("#posterLightboxImage").src = poster.image;
   document.querySelector("#posterLightboxImage").alt = poster.title;
+  clearTimeout(posterLightboxCloseTimer);
   posterLightbox.hidden = false;
+  posterLightbox.classList.remove("is-closing");
+  requestAnimationFrame(() => requestAnimationFrame(() => posterLightbox.classList.add("is-open")));
   document.body.style.overflow = "hidden";
   clearInterval(posterTimer);
 });
 
+posterCarousel.addEventListener("click", event => {
+  if (event.target.closest(".poster-card.is-active") || event.target.closest("button")) return;
+  const bounds = posterCarousel.getBoundingClientRect();
+  movePoster(event.clientX < bounds.left + bounds.width / 2 ? -1 : 1);
+});
+
 function closePosterLightbox() {
-  posterLightbox.hidden = true;
+  if (posterLightbox.hidden || posterLightbox.classList.contains("is-closing")) return;
+  posterLightbox.classList.remove("is-open");
+  posterLightbox.classList.add("is-closing");
   document.body.style.overflow = "";
   restartPosterTimer();
+  posterLightboxCloseTimer = setTimeout(() => {
+    posterLightbox.hidden = true;
+    posterLightbox.classList.remove("is-closing");
+  }, 360);
 }
 
 document.querySelector("#closePosterLightbox").addEventListener("click", closePosterLightbox);
