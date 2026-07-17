@@ -1,6 +1,9 @@
 const SHEET_ID = "1QNphF5TzPIeUlIgwGofiYiJ1tdN4AMcL";
 const SHEET_JSON_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=Sheet1`;
+const SPONSOR_SHEET_ID = "1iEvTpVj5JgqVnxNQkkogpTXpyJ-HX3VtZWWyGxlTD7M";
+const SPONSOR_SHEET_JSON_URL = `https://docs.google.com/spreadsheets/d/${SPONSOR_SHEET_ID}/gviz/tq?sheet=Sheet1`;
 const REFRESH_INTERVAL = 10000;
+const PAGE_RELOAD_INTERVAL = 3 * 60 * 1000;
 
 document.addEventListener("gesturestart", event => event.preventDefault(), { passive: false });
 document.addEventListener("gesturechange", event => event.preventDefault(), { passive: false });
@@ -258,7 +261,7 @@ const staffItems = [
   ["JURUGAMBAR", ["PAU KEAK YIONG"]],
   ["GURU RUMAH SUKAN", ["JAIMY GOH BOON SUANG (BIRU)", "PUAN SITI KHADIJAH BINTI MAT DAUD (KUNING)", "PUAN TAN GUAT LEE (MERAH)"]]
 ];
-const sponsorItems = ["COCOCROWN JAYA", "HUA NGONG", "HOMETOWN PHARMACY"];
+let sponsorItems = [];
 const eventTranslations = {
   "Lompat Tinggi": "跳高",
   "Lompat Jauh": "跳远",
@@ -297,7 +300,7 @@ function openInfoPanel(type) {
         ? `<p>赛事资料正在从 Google Sheet 读取，请稍后再试。</p>`
         : type === "staff"
           ? `<div class="staff-list">${staffItems.map(([role, names]) => `<article><strong>${role}</strong><div>${names.map(name => `<span>${name}</span>`).join("")}</div></article>`).join("")}</div>`
-          : `<div class="sponsor-list">${Array.from({ length: 12 }, (_, index) => sponsorItems[index] || "").map(name => `<article class="${name ? "" : "empty"}">${name ? `<strong>${name}</strong>` : `<span>◆</span>`}</article>`).join("")}</div>`;
+          : `<div class="sponsor-list">${Array.from({ length: 12 }, (_, index) => sponsorItems[index] || "").map(name => `<article class="${name ? "" : "empty"}">${name ? `<strong>${name}</strong>` : `<span>◆</span><small>COMING SOON</small>`}</article>`).join("")}</div>`;
   infoModal.dataset.panel = type;
   infoModal.hidden = false;
   document.body.style.overflow = "hidden";
@@ -410,6 +413,47 @@ function loadSheetWithJsonp() {
   });
 }
 
+async function refreshSponsors() {
+  try {
+    const data = await loadSponsorSheetWithJsonp();
+    if (data.status !== "ok" || !data.table) return;
+    let sponsorColumn = data.table.cols.findIndex(column => String(column.label || "").trim().toUpperCase() === "SPONSOR");
+    if (sponsorColumn < 0) {
+      const headerRow = data.table.rows.find(row => row.c.some(cell => String(cell?.v || "").trim().toUpperCase() === "SPONSOR"));
+      sponsorColumn = headerRow ? headerRow.c.findIndex(cell => String(cell?.v || "").trim().toUpperCase() === "SPONSOR") : 0;
+    }
+    const names = data.table.rows
+      .map(row => String(row.c[sponsorColumn]?.v || "").trim())
+      .filter(name => name && name.toUpperCase() !== "SPONSOR")
+      .slice(0, 12);
+    sponsorItems = names;
+    if (!infoModal.hidden && infoModal.dataset.panel === "sponsors") openInfoPanel("sponsors");
+  } catch (error) {
+    console.warn("Sponsor sheet:", error.message);
+  }
+}
+
+function loadSponsorSheetWithJsonp() {
+  return new Promise((resolve, reject) => {
+    const callbackName = `sponsorSheetCallback_${Date.now()}`;
+    const script = document.createElement("script");
+    const timeout = setTimeout(() => finish(new Error("赞助商表格连接超时")), 8000);
+    function finish(error, data) {
+      clearTimeout(timeout);
+      script.remove();
+      delete window[callbackName];
+      error ? reject(error) : resolve(data);
+    }
+    window[callbackName] = data => finish(null, data);
+    script.onerror = () => finish(new Error("无法连接赞助商表格"));
+    script.src = `${SPONSOR_SHEET_JSON_URL}&tqx=out:json;responseHandler:${callbackName}&cacheBust=${Date.now()}`;
+    document.head.append(script);
+  });
+}
+
 render();
 refreshScores();
 setInterval(refreshScores, REFRESH_INTERVAL);
+refreshSponsors();
+setInterval(refreshSponsors, REFRESH_INTERVAL);
+setTimeout(() => window.location.reload(), PAGE_RELOAD_INTERVAL);
