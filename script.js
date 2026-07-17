@@ -375,11 +375,35 @@ function restartPosterTimer() {
 }
 
 const posterCarousel = document.querySelector("#posterCarousel");
+const posterLightbox = document.querySelector("#posterLightbox");
 posterCarousel.querySelector(".previous").addEventListener("click", () => movePoster(-1));
 posterCarousel.querySelector(".next").addEventListener("click", () => movePoster(1));
 document.querySelector("#posterDots").addEventListener("click", event => {
   const dot = event.target.closest("[data-poster-dot]");
   if (dot) { activePoster = Number(dot.dataset.posterDot); updatePosterPositions(); restartPosterTimer(); }
+});
+document.querySelector("#posterStage").addEventListener("click", event => {
+  const card = event.target.closest(".poster-card.is-active");
+  if (!card) return;
+  const poster = posterItems[Number(card.dataset.posterIndex)];
+  if (!poster?.image) return;
+  document.querySelector("#posterLightboxImage").src = poster.image;
+  document.querySelector("#posterLightboxImage").alt = poster.title;
+  posterLightbox.hidden = false;
+  document.body.style.overflow = "hidden";
+  clearInterval(posterTimer);
+});
+
+function closePosterLightbox() {
+  posterLightbox.hidden = true;
+  document.body.style.overflow = "";
+  restartPosterTimer();
+}
+
+document.querySelector("#closePosterLightbox").addEventListener("click", closePosterLightbox);
+posterLightbox.addEventListener("click", event => { if (event.target === posterLightbox) closePosterLightbox(); });
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape" && !posterLightbox.hidden) closePosterLightbox();
 });
 posterCarousel.addEventListener("keydown", event => {
   if (event.key === "ArrowLeft") movePoster(-1);
