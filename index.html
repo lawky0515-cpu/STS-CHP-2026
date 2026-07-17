@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="theme-color" content="#07131f" />
   <title>板督中公校内运动会实时奖牌榜</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="responsive.css" />
+  <link rel="stylesheet" href="styles.css?v=20260717-2" />
+  <link rel="stylesheet" href="responsive.css?v=20260717-2" />
 </head>
 <body>
   <header class="hero">
@@ -34,8 +34,7 @@
 
     <section class="scoreboard" id="scoreboard" aria-label="各组奖牌榜"></section>
 
-    <section class="poster-section" aria-labelledby="posterTitle">
-      <div class="poster-heading"><p>POSTER GALLERY</p><h2 id="posterTitle">海报预览</h2></div>
+    <section class="poster-section" aria-label="海报预览">
       <div class="poster-carousel" id="posterCarousel" tabindex="0" aria-label="海报3D轮播">
         <button class="poster-arrow previous" type="button" aria-label="上一张海报">‹</button>
         <div class="poster-stage" id="posterStage"></div>
@@ -61,12 +60,21 @@
   </template>
 
   <section class="info-modal" id="infoModal" hidden>
+    <div class="coin-rain" aria-hidden="true">
+      <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+      <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+    </div>
     <div class="info-dialog" role="dialog" aria-modal="true" aria-labelledby="infoTitle">
       <header><div><p id="infoEyebrow"></p><h2 id="infoTitle"></h2></div><button id="closeInfo" type="button" aria-label="关闭">×</button></header>
       <div class="info-content" id="infoContent"></div>
     </div>
   </section>
 
-  <script src="script.js"></script>
+  <section class="poster-lightbox" id="posterLightbox" hidden aria-label="放大海报">
+    <button type="button" id="closePosterLightbox" aria-label="关闭海报">×</button>
+    <img id="posterLightboxImage" src="" alt="放大海报" />
+  </section>
+
+  <script src="script.js?v=20260717-2"></script>
 </body>
 </html>
