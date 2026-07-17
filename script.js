@@ -9,14 +9,15 @@ document.addEventListener("gestureend", event => event.preventDefault(), { passi
 const posterItems = [
   { image: "BANNER/1.jpg", title: "海报 1" },
   { image: "BANNER/2.jpg", title: "海报 2" },
-  { image: "BANNER/3.jpg", title: "海报 3" },
   { image: "BANNER/3-1.jpg", title: "海报 3-1" },
   { image: "BANNER/4.jpg", title: "海报 4" },
   { image: "BANNER/5.jpg", title: "海报 5" },
   { image: "BANNER/6.jpg", title: "海报 6" },
   { image: "BANNER/7.jpg", title: "海报 7" },
   { image: "BANNER/8.jpg", title: "海报 8" },
-  { image: "BANNER/9.jpg", title: "海报 9" }
+  { image: "BANNER/9.jpg", title: "海报 9" },
+  { image: "BANNER/10.jpg", title: "海报 10" },
+  { image: "BANNER/11.jpg", title: "海报 11" }
 ];
 let activePoster = 0;
 let posterTimer;
@@ -257,7 +258,7 @@ const staffItems = [
   ["JURUGAMBAR", ["PAU KEAK YIONG"]],
   ["GURU RUMAH SUKAN", ["JAIMY GOH BOON SUANG (BIRU)", "PUAN SITI KHADIJAH BINTI MAT DAUD (KUNING)", "PUAN TAN GUAT LEE (MERAH)"]]
 ];
-const sponsorItems = ["COCOCROWN JAYA"];
+const sponsorItems = ["COCOCROWN JAYA", "HUA NGONG", "HOMETOWN PHARMACY"];
 const eventTranslations = {
   "Lompat Tinggi": "跳高",
   "Lompat Jauh": "跳远",
@@ -296,7 +297,7 @@ function openInfoPanel(type) {
         ? `<p>赛事资料正在从 Google Sheet 读取，请稍后再试。</p>`
         : type === "staff"
           ? `<div class="staff-list">${staffItems.map(([role, names]) => `<article><strong>${role}</strong><div>${names.map(name => `<span>${name}</span>`).join("")}</div></article>`).join("")}</div>`
-          : `<div class="sponsor-list">${sponsorItems.map(name => `<article><span>◆</span><strong>${name}</strong></article>`).join("")}</div>`;
+          : `<div class="sponsor-list">${Array.from({ length: 12 }, (_, index) => sponsorItems[index] || "").map(name => `<article class="${name ? "" : "empty"}">${name ? `<strong>${name}</strong>` : `<span>◆</span>`}</article>`).join("")}</div>`;
   infoModal.dataset.panel = type;
   infoModal.hidden = false;
   document.body.style.overflow = "hidden";
