@@ -241,25 +241,25 @@ const programmeItems = [
   { time: "1100", items: [["闭幕仪式", "Penutupan (Fly Kenyalang Fly High)"]] }
 ];
 const staffItems = [
-  ["PENGERUSI", ["GB SIET UNG CHING"]],
-  ["NAIB PENGERUSI", ["LAW KUING YIT"]],
-  ["SETIAUSAHA", ["TAN GUAT LEE"]],
-  ["BENDAHARI", ["TIONG CHONG LUNG"]],
-  ["PERHIASAN ASTAKA", ["SEMUA GURU"]],
-  ["JURUACARA", ["CHAI MEI LING"]],
-  ["PENDAFTARAN", ["DONNA KONG CHIEW SIEW"]],
-  ["AJK MAKANAN & MINUMAN", ["MAS NORAIDA BINTI MATZROL"]],
-  ["PELEPAS", ["LAW KUING YIT"]],
-  ["PENAMAT", ["MOHAMAD IZZUDDIN BIN RASHIDI", "LAW ANG", "EXCO PIBG"]],
-  ["PENCATAT MARKAH", ["FELICIA TAY ZHI TING", "NICOLE HII CHIANG HEE", "TRACY GRACE ANAK NICHOL"]],
-  ["URUSETIA & HADIAH", ["TRACY GRACE ANAK NICHOL", "CHONG KEN CHU", "NICOLE HII CHIANG HEE"]],
-  ["AJK PADANG & PERALATAN", ["LAW ANG", "LAW KUING YIT", "CHRISTOPHER NG", "LARRY"]],
-  ["PENGURUS TEKNIK", ["LAW ANG", "TAN WEI JIN", "LAW KUING YIT"]],
-  ["SISTEM PA", ["TAN WEI JIN"]],
-  ["BOOTH JUALAN", ["DONNA KONG CHIEW SIEW"]],
-  ["AJK KESELAMATAN", ["CHAI MEI LING", "AHLI BSMM"]],
-  ["JURUGAMBAR", ["PAU KEAK YIONG"]],
-  ["GURU RUMAH SUKAN", ["JAIMY GOH BOON SUANG (BIRU)", "PUAN SITI KHADIJAH BINTI MAT DAUD (KUNING)", "PUAN TAN GUAT LEE (MERAH)"]]
+  [["主席", "PENGERUSI"], ["GB SIET UNG CHING"]],
+  [["副主席", "NAIB PENGERUSI"], ["LAW KUING YIT"]],
+  [["秘书", "SETIAUSAHA"], ["TAN GUAT LEE"]],
+  [["财政", "BENDAHARI"], ["TIONG CHONG LUNG"]],
+  [["司令台装饰", "PERHIASAN ASTAKA"], ["SEMUA GURU"]],
+  [["司仪", "JURUACARA"], ["CHAI MEI LING"]],
+  [["报到组", "PENDAFTARAN"], ["DONNA KONG CHIEW SIEW"]],
+  [["饮食组", "AJK MAKANAN & MINUMAN"], ["MAS NORAIDA BINTI MATZROL"]],
+  [["发令员", "PELEPAS"], ["LAW KUING YIT"]],
+  [["终点裁判", "PENAMAT"], ["MOHAMAD IZZUDDIN BIN RASHIDI", "LAW ANG", "EXCO PIBG"]],
+  [["计分员", "PENCATAT MARKAH"], ["FELICIA TAY ZHI TING", "NICOLE HII CHIANG HEE", "TRACY GRACE ANAK NICHOL"]],
+  [["秘书处及奖品组", "URUSETIA & HADIAH"], ["TRACY GRACE ANAK NICHOL", "CHONG KEN CHU", "NICOLE HII CHIANG HEE"]],
+  [["场地及器材组", "AJK PADANG & PERALATAN"], ["LAW ANG", "LAW KUING YIT", "CHRISTOPHER NG", "LARRY"]],
+  [["技术组", "PENGURUS TEKNIK"], ["LAW ANG", "TAN WEI JIN", "LAW KUING YIT"]],
+  [["音响组", "AJK SISTEM SIAR RAYA"], ["TAN WEI JIN"]],
+  [["售卖摊位组", "BOOTH JUALAN"], ["DONNA KONG CHIEW SIEW", "MAS NORAIDA BINTI MATZROL", "PHYLLIS ANAK HENRY HA"]],
+  [["安全组", "AJK KESELAMATAN"], ["CHAI MEI LING", "AHLI BSMM"]],
+  [["摄影", "JURUGAMBAR"], ["PAU KEAK YIONG"]],
+  [["运动组老师", "GURU RUMAH SUKAN"], ["JAIMY GOH BOON SUANG (BIRU)", "PUAN SITI KHADIJAH BINTI MAT DAUD (KUNING)", "PUAN TAN GUAT LEE (MERAH)"]]
 ];
 let sponsorItems = [];
 const eventTranslations = {
@@ -295,10 +295,10 @@ function showInfoModal() {
 function openInfoPanel(type) {
   const isProgramme = type === "program";
   const panelInfo = {
-    program: ["PROGRAMME", "节目表"],
+    program: ["节目表", "TENTATIF PROGRAM"],
     events: ["EVENTS", "赛事表"],
-    sponsors: ["WITH GRATITUDE", "感恩有您 · 老板发大财"],
-    staff: ["COMMITTEE", "工作人员"]
+    sponsors: ["SPONSOR", "感恩有您 · 老板发大财"],
+    staff: ["工作人员", "AJK"]
   }[type];
   document.querySelector("#infoEyebrow").textContent = panelInfo[0];
   document.querySelector("#infoTitle").textContent = panelInfo[1];
@@ -313,7 +313,7 @@ function openInfoPanel(type) {
       : type === "events"
         ? `<p>赛事资料正在从 Google Sheet 读取，请稍后再试。</p>`
         : type === "staff"
-          ? `<div class="staff-list">${staffItems.map(([role, names]) => `<article><strong>${role}</strong><div>${names.map(name => `<span>${name}</span>`).join("")}</div></article>`).join("")}</div>`
+          ? `<div class="staff-list">${staffItems.map(([role, names]) => `<article><strong><span>${role[0]}</span><small>${role[1]}</small></strong><div>${names.map(name => `<span>${name}</span>`).join("")}</div></article>`).join("")}</div>`
           : `<div class="sponsor-list">${Array.from({ length: 12 }, (_, index) => sponsorItems[index] || "").map(name => `<article class="${name ? "" : "empty"}">${name ? `<strong>${name}</strong>` : `<span>◆</span><small>COMING SOON</small>`}</article>`).join("")}</div>`;
   infoModal.dataset.panel = type;
   showInfoModal();
