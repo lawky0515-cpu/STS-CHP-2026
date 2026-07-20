@@ -12,7 +12,7 @@ document.addEventListener("gestureend", event => event.preventDefault(), { passi
 const posterItems = [
   { image: "BANNER/1.jpg", title: "海报 1" },
   { image: "BANNER/2.jpg", title: "海报 2" },
-  { image: "BANNER/3-1.jpg", title: "海报 3-1" },
+  { image: "BANNER/3.jpg", title: "海报 3" },
   { image: "BANNER/4.jpg", title: "海报 4" },
   { image: "BANNER/5.jpg", title: "海报 5" },
   { image: "BANNER/6.jpg", title: "海报 6" },
