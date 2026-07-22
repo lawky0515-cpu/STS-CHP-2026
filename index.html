@@ -1,80 +1,298 @@
-<!doctype html>
-<html lang="zh-CN">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#07131f" />
-  <title>板督中公校内运动会实时奖牌榜</title>
-  <link rel="stylesheet" href="styles.css?v=20260717-2" />
-  <link rel="stylesheet" href="responsive.css?v=20260717-2" />
+    <meta charset="UTF-8">
+    <meta
+    name="viewport"
+    content="width=device-width,
+             initial-scale=1.0,
+             maximum-scale=1.0,
+             user-scalable=no">
+    <title>CCC Stationery</title>
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <header class="hero">
-    <div>
-      <p class="kicker">STS CHP 2026 · LIVE</p>
-      <h1>板督中公校内运动会实时奖牌榜</h1>
-      <p class="subtitle">勇往直前 · 我能</p>
+<body class="bg-gray-50">
+<!-- Banner -->
+<section class="banner">
+    <button class="banner-arrow banner-arrow-left" type="button" aria-label="Previous banner">
+        &lsaquo;
+    </button>
+    <div class="banner-track" id="banner-track">
+        <div class="banner-slide">
+            <img src="jpg/ACRYLIC MARKER.jpg" alt="Acrylic marker promotion">
+        </div>
+        <div class="banner-slide">
+            <img src="jpg/PINK BASKETBALL S5.jpg" alt="Basketball promotion">
+        </div>
+        <div class="banner-slide">
+            <img src="jpg/STEM MB.jpg" alt="STEM product promotion">
+        </div>
     </div>
-    <div class="live-pill"><span></span> <b id="syncStatus">正在连接成绩表</b></div>
-  </header>
+    <button class="banner-arrow banner-arrow-right" type="button" aria-label="Next banner">
+        &rsaquo;
+    </button>
+</section>
+<!-- Header -->
+<header class="bg-white shadow">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+        <div class="flex items-center justify-between gap-3">
+            <div class="logo">
+                C<span class="logo-eye"><span class="logo-pupil"></span><span class="logo-lid"></span></span>C<span class="logo-eye"><span class="logo-pupil"></span><span class="logo-lid"></span></span> JAYA
+            </div>
+            <button
+                class="cart-btn"
+                onclick="toggleCart()">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span id="cart-count">
+                    0
+                </span>
+            </button>
+        </div>
+    </div>
+</header>
+<!-- Category -->
+<div class="max-w-7xl mx-auto px-4 py-4 category-wrapper">
+    <div class="flex flex-nowrap gap-2 overflow-x-auto whitespace-nowrap">
+        <button
+            id="cat-all"
+            onclick="filterCategory('all')"
+            class="category-btn active">
+            All
+        </button>
+        <button
+            id="cat-stationery"
+            onclick="filterCategory('stationery')"
+            class="category-btn">
+            Stationery
+        </button>
+        <button
+            id="cat-sports"
+            onclick="filterCategory('sports')"
+            class="category-btn">
+            Sports
+        </button>
+        <button
+            id="cat-art"
+            onclick="filterCategory('art')"
+            class="category-btn">
+            Art
+        </button>
+        <button
+            id="cat-music"
+            onclick="filterCategory('music')"
+            class="category-btn">
+            Music
+        </button>
+        <button
+            id="cat-stem"
+            onclick="filterCategory('stem')"
+            class="category-btn">
+            STEM
+        </button>
+        <button
+            id="cat-trophy-medal"
+            onclick="filterCategory('trophy-medal')"
+            class="category-btn">
+            Trophy
+        </button>
+        <button
+            id="cat-camping"
+            onclick="filterCategory('camping')"
+            class="category-btn">
+            Camping
+        </button>
+        <button
+            id="cat-printing"
+            onclick="filterCategory('printing')"
+            class="category-btn">
+            Printing
+        </button>    
+    </div>
+</div>
+<!-- Search -->
+<div class="search-wrapper">
+    <div class="relative">
+        <input
+            id="search-input"
+            type="text"
+            placeholder="Search Products..."
+            class="search-box">
+        <div
+            id="virtual-search-text"
+            class="virtual-search-text">
+        </div>
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+    </div>
+</div>
+<!-- Products -->
+    <main class="max-w-7xl mx-auto px-4 py-6">
+        <div
+            id="products-container"
+            class="products-grid">
+        </div>
+    </main>
+    <!-- Product Detail Modal -->
+    <div
+        id="product-detail-modal"
+        class="hidden modal-overlay">
+        <div class="detail-modal">
+            <div class="modal-header">
+                <h3 id="detail-name">
+                    Product Name
+                </h3>
+                <button onclick="closeDetail()">
+                    ×
+                </button>
+            </div>
+            <div class="detail-body">
+                <!-- Product Image -->
+                <div id="detail-image">
+                </div>
+                <div class="p-5">
+                    <!-- Description -->
+                    <p id="detail-desc">
+                        Product Description
+                    </p>
+                    <!-- Price -->
+                    <div
+                        id="detail-price"
+                        class="product-price"
+                        style="margin-top:15px;">
+                        RM 0.00
+                    </div>
+                    <!-- Color -->
+                    <div style="margin-top:20px;">
+                        <h4 class="font-semibold">
+                            Color
+                        </h4>
+                        <div
+                            id="color-options"
+                            class="flex flex-wrap gap-2 mt-2">
+                        </div>
+                    </div>
+                    <!-- Quantity -->
+                    <div class="detail-action-row">
+                        <div class="detail-qty-box">
+                            <h4 class="detail-quantity-label">
+                                Quantity
+                            </h4>
+                            <div
+                                class="flex items-center gap-3 mt-2">
+                                <button
+                                    onclick="changeDetailQty(-1)"
+                                    class="border px-3 py-1 rounded">
+                                    -
+                                </button>
+                                <span id="detail-qty">
+                                    1
+                                </span>
+                                <button
+                                    onclick="changeDetailQty(1)"
+                                    class="border px-3 py-1 rounded">
+                                    +
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Add To Cart -->
+                        <button
+                            class="add-cart-btn"
+                            aria-label="Add to cart"
+                            onclick="addCurrentToCart()">
+                            <i class="fa-solid fa-cart-plus"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Shopping Cart Modal -->
+    <div
+        id="cart-modal"
+        class="hidden modal-overlay">
+        <div class="cart-modal">
+            <div class="modal-header">
+                <h3>
+                    Shopping Cart
+                </h3>
+                <button onclick="closeCart()">
+                    ×
+                </button>
+            </div>
+            <div
+                id="cart-items"
+                class="cart-body">
+            </div>
+            <div class="cart-footer">
 
-  <main>
-    <section class="summary-bar" aria-label="赛事概况">
-      <div><span>已颁发奖牌</span><strong id="totalMedals">0</strong></div>
-      <div><span>领先队伍</span><strong id="leaderName">—</strong></div>
-      <div><span>最后更新</span><strong id="updatedTime">尚未更新</strong></div>
-    </section>
 
-    <section class="ranking-panel">
-      <div class="section-title">
-        <div><p>STANDINGS</p><h2>当前排名</h2></div>
-      </div>
-      <div id="rankingList" class="ranking-list"></div>
-    </section>
+    <div class="total-row">
+        <span>Total</span>
+        <span id="total-price">
+            RM 0.00
+        </span>
+    </div>
 
-    <section class="scoreboard" id="scoreboard" aria-label="各组奖牌榜"></section>
 
-    <section class="poster-section" aria-label="海报预览">
-      <div class="poster-carousel" id="posterCarousel" tabindex="0" aria-label="海报3D轮播">
-        <button class="poster-arrow previous" type="button" aria-label="上一张海报">‹</button>
-        <div class="poster-stage" id="posterStage"></div>
-        <button class="poster-arrow next" type="button" aria-label="下一张海报">›</button>
-      </div>
-      <div class="poster-dots" id="posterDots" aria-label="选择海报"></div>
-    </section>
+    <div style="display:flex;gap:10px;margin-top:15px;">
 
-    <nav class="quick-actions" aria-label="运动会资料">
-      <button type="button" data-panel="program"><span class="action-icon" aria-hidden="true">▦</span><span class="action-label">节目表<small>Atur Cara</small></span></button>
-      <button type="button" data-panel="events"><span class="action-icon" aria-hidden="true">⚑</span><span class="action-label">赛事表<small>Acara</small></span></button>
-      <button type="button" data-panel="sponsors"><span class="action-icon" aria-hidden="true">◆</span><span class="action-label">赞助商<small>Penaja</small></span></button>
-      <button type="button" data-panel="staff"><span class="action-icon staff-icon" aria-hidden="true"></span><span class="action-label">工作人员<small>Jawatankuasa</small></span></button>
+
+        <button
+            onclick="downloadPDF()"
+            class="add-cart-btn">
+            Download PDF
+        </button>
+
+
+        <button
+            onclick="copyCart()"
+            class="add-cart-btn">
+            Copy
+        </button>
+
+
+    </div>
+
+
+</div>
+        </div>
+    </div>
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <button
+            type="button"
+            class="bottom-nav-item active"
+            onclick="window.scrollTo({top:0, behavior:'smooth'})">
+            <i class="fa-solid fa-house"></i>
+            <span>首页</span>
+        </button>
+        <a
+            class="bottom-nav-item"
+            href="https://www.facebook.com/profile.php?id=61591210336509"
+            target="_blank"
+            rel="noopener">
+            <i class="fa-brands fa-facebook-f"></i>
+            <span>脸书</span>
+        </a>
+        <a
+            class="bottom-nav-item"
+            href="https://wa.me/60146835922"
+            target="_blank"
+            rel="noopener">
+            <i class="fa-brands fa-whatsapp"></i>
+            <span>WhatsApp</span>
+        </a>
     </nav>
-  </main>
-
-  <template id="teamTemplate">
-    <article class="team-card">
-      <div class="rank-mark"></div>
-      <div class="team-heading"><div class="flag"></div><div><small>TEAM</small><h2></h2></div></div>
-      <div class="medals"></div>
-    </article>
-  </template>
-
-  <section class="info-modal" id="infoModal" hidden>
-    <div class="coin-rain" aria-hidden="true">
-      <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
-      <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
-    </div>
-    <div class="info-dialog" role="dialog" aria-modal="true" aria-labelledby="infoTitle">
-      <header><div><p id="infoEyebrow"></p><h2 id="infoTitle"></h2></div><button id="closeInfo" type="button" aria-label="关闭">×</button></header>
-      <div class="info-content" id="infoContent"></div>
-    </div>
-  </section>
-
-  <section class="poster-lightbox" id="posterLightbox" hidden aria-label="放大海报">
-    <button type="button" id="closePosterLightbox" aria-label="关闭海报">×</button>
-    <img id="posterLightboxImage" src="" alt="放大海报" />
-  </section>
-
-  <script src="script.js?v=20260717-2"></script>
+    <!-- JS -->
+    <!-- JS --> 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>      
+<script src="products.js"></script>
+<script src="cart.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
